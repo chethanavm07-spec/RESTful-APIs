@@ -1,0 +1,160 @@
+const cityInput = document.getElementById("cityInput");
+const searchBtn = document.getElementById("searchBtn");
+
+const loading = document.getElementById("loading");
+const errorBox = document.getElementById("error");
+const weatherCard = document.getElementById("weatherCard");
+
+const cityName = document.getElementById("cityName");
+const countryName = document.getElementById("countryName");
+
+const temperature = document.getElementById("temperature");
+const tempValue = document.getElementById("tempValue");
+
+const humidity = document.getElementById("humidity");
+const windSpeed = document.getElementById("windSpeed");
+const cloudCover = document.getElementById("cloudCover");
+
+const weatherDescription =
+    document.getElementById("weatherDescription");
+
+const weatherIcon =
+    document.getElementById("weatherIcon");
+
+const updatedTime =
+    document.getElementById("updatedTime");
+
+
+// Search button
+searchBtn.addEventListener("click", () => {
+
+    const city = cityInput.value.trim();
+
+    if (city === "") {
+        showError("Please enter a city name.");
+        return;
+    }
+
+    getWeather(city);
+});
+
+
+// Press Enter to search
+cityInput.addEventListener("keypress", (event) => {
+
+    if (event.key === "Enter") {
+        searchBtn.click();
+    }
+
+});
+
+
+// Main weather function
+async function getWeather(city) {
+
+    try {
+
+        showLoading(true);
+        hideError();
+        weatherCard.classList.add("hidden");
+
+        // -------------------------------
+        // STEP 1: Find city coordinates
+        // -------------------------------
+
+        const geoURL =
+            `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
+
+        const geoResponse = await fetch(geoURL);
+
+        if (!geoResponse.ok) {
+            throw new Error("Unable to connect to location service.");
+        }
+
+        const geoData = await geoResponse.json();
+
+        if (!geoData.results || geoData.results.length === 0) {
+            throw new Error(
+                "City not found. Please enter a valid city name."
+            );
+        }
+
+        const location = geoData.results[0];
+
+        const latitude = location.latitude;
+        const longitude = location.longitude;
+
+        // -------------------------------
+        // STEP 2: Get weather information
+        // -------------------------------
+
+        const weatherURL =
+            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,wind_speed_10m&timezone=auto`;
+
+        const weatherResponse = await fetch(weatherURL);
+
+        if (!weatherResponse.ok) {
+            throw new Error(
+                "Unable to retrieve weather information."
+            );
+        }
+
+        const weatherData = await weatherResponse.json();
+
+        // -------------------------------
+        // STEP 3: Display weather
+        // -------------------------------
+
+        displayWeather(location, weatherData);
+
+    } catch (error) {
+
+        console.error(error);
+
+        showError(
+            error.message ||
+            "Something went wrong. Please try again."
+        );
+
+    } finally {
+
+        showLoading(false);
+
+    }
+}
+
+
+// Display weather
+function displayWeather(location, data) {
+
+    const current = data.current;
+
+    cityName.textContent = location.name;
+
+    countryName.textContent =
+        `${location.country || ""} ${location.admin1 ? "• " + location.admin1 : ""}`;
+
+    const temp = current.temperature_2m;
+
+    temperature.textContent =
+        Math.round(temp);
+
+    tempValue.textContent =
+        `${Math.round(temp)} °C`;
+
+    humidity.textContent =
+        `${current.relative_humidity_2m} %`;
+
+    windSpeed.textContent =
+        `${current.wind_speed_10m} km/h`;
+
+    cloudCover.textContent =
+        `${current.cloud_cover} %`;
+
+    const weatherInfo =
+        getWeatherDescription(current.weather_code);
+
+    weatherDescription.textContent =
+        weatherInfo.description;
+
+    weatherIcon

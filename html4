@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>🌤️ Weather Dashboard</h1>
+            <p>Check real-time weather information by city</p>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-box">
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter city name..."
+                autocomplete="off"
+            >
+
+            <button id="searchBtn">
+                Search
+            </button>
+        </section>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            Loading weather...
+        </div>
+
+        <!-- Error -->
+        <div id="error" class="error hidden"></div>
+
+        <!-- Weather Result -->
+        <section id="weatherCard" class="weather-card hidden">
+
+            <div class="location">
+                <h2 id="cityName">City</h2>
+                <p id="countryName">Country</p>
+            </div>
+
+            <div class="main-weather">
+
+                <div class="temperature">
+                    <span id="temperature">--</span>°C
+                </div>
+
+                <div>
+                    <div id="weatherDescription" class="description">
+                        Weather
+                    </div>
+
+                    <div class="weather-icon" id="weatherIcon">
+                        🌤️
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Weather Details -->
+            <div class="weather-details">
+
+                <div class="weather-box">
+                    <span>🌡️</span>
+                    <h3>Temperature</h3>
+                    <p id="tempValue">-- °C</p>
+                </div>
+
+                <div class="weather-box">
+                    <span>💧</span>
+                    <h3>Humidity</h3>
+                    <p id="humidity">-- %</p>
+                </div>
+
+                <div class="weather-box">
+                    <span>💨</span>
+                    <h3>Wind Speed</h3>
+                    <p id="windSpeed">-- km/h</p>
+                </div>
+
+                <div class="weather-box">
+                    <span>☁️</span>
+                    <h3>Cloud Cover</h3>
+                    <p id="cloudCover">-- %</p>
+                </div>
+
+            </div>
+
+            <div class="updated">
+                Last updated: <span id="updatedTime">--</span>
+            </div>
+
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
